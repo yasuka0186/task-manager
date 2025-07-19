@@ -1,9 +1,12 @@
 <template>
   <div>
     <h1>ユーザー登録</h1>
-    <input v-model="email" placeholder="メールアドレス" />
-    <input v-model="password" placeholder="パスワード" type="password" />
-    <button @click="register">登録</button>
+    <form @submit.prevent="handleRegister">
+    <input v-model="email" placeholder="メールアドレス" type="email" required />
+    <input v-model="password" placeholder="パスワード" type="password" required />
+    <button type="submit">登録</button>
+    </form>
+    <p v-if="error" style="color: red">{{ error }}</p>
   </div>
 </template>
 
@@ -15,15 +18,16 @@ import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
+const error = ref('')
 const router = useRouter()
 
-const register = async () => {
+const handleRegister = async () => {
+  error.value = '';
   try {
     await createUserWithEmailAndPassword(auth, email.value, password.value)
     router.push('/') // 登録後にタスク一覧ページへ
-  } catch (error) {
-    alert('登録に失敗しました')
-    console.error(error)
+  } catch (e: any) {
+    error.value = e.message;
   }
 }
 </script>
