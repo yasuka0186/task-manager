@@ -1,9 +1,12 @@
 <template>
     <div>
         <h1>ログイン</h1>
-        <input v-model="email" placeholder="Email">
-        <input v-model="password" placeholder="Password" type="password" />
-        <button @click="login">ログイン</button>
+        <form @submit.prevent="handleLogin">
+            <input v-model="email" placeholder="Email" type="email" required />
+            <input v-model="password" placeholder="Password" type="password" required />
+            <button type="submit">ログイン</button>
+        </form>
+        <p v-if="error">{{ error }}</p>
     </div>
 </template>
 <script setup lang="ts">
@@ -14,14 +17,16 @@ import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
+const error = ref('')
 const router = useRouter()
 
-const login = async () => {
+const handleLogin = async () => {
+    error.value = '';
     try {
         await signInWithEmailAndPassword(auth, email.value, password.value)
         router.push('/')
-    } catch {
-        alert('ログイン失敗')
+    } catch (err: any) {
+        error.value = err.message;
     }
 }
 </script>
